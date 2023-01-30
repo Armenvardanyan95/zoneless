@@ -1,24 +1,105 @@
-# Zoneless
+# **THIS IS EXPERIMENTAL**
 
-This library was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.0.0.
+## Purpose
 
-## Code scaffolding
+This project aims to remove `zone.js` by using JavaScript [Proxies](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) and the Angular's new [`inject`](https://angular.io/api/core/inject) function to get the [`ChangeDetectorRef`](https://angular.io/api/core/ChangeDetectorRef) of the component and notify when properties are changed. 
 
-Run `ng generate component component-name --project zoneless` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module --project zoneless`.
-> Note: Don't forget to add `--project zoneless` or else it will be added to the default project in your `angular.json` file. 
+Thus, you can remove `zone.js` from your project and both improve the performance of your application and the bundle size. 
 
-## Build
+## Usage
 
-Run `ng build zoneless` to build the project. The build artifacts will be stored in the `dist/` directory.
+### Installation
 
-## Publishing
+Just install with `npm`:
 
-After building your library with `ng build zoneless`, go to the dist folder `cd dist/zoneless` and run `npm publish`.
+```bash
+npm install zoneless
+```
 
-## Running unit tests
+### Import and use
 
-Run `ng test zoneless` to execute the unit tests via [Karma](https://karma-runner.github.io).
+```typescript
 
-## Further help
+import { useState } from 'zoneless';
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+@Component({
+    selector: 'app-root',
+    template: `
+        <h1>Zoneless</h1>
+        <p>Counter: {{ state.counter }}</p>
+        <button (click)="increment()">Increment</button>
+    `,
+    })
+})
+export class AppComponent {
+    state = useState({
+        counter: 0,
+    });
+
+    increment() {
+        this.state.counter++; // everything works as usual
+    }
+}
+```
+
+### Changes you need top make to remove `zone.js`
+
+First, you need to remove `zone.js` from your polyfills. Starting from Angular 15, polyfills are loaded using a property in `angular.json`:
+
+```json
+"projects": {
+    "my-project": {
+        "architect": {
+            "build": {
+                "options": {
+                    "polyfills": [
+                        "zone.js" // remove this line
+                    ]
+                }
+            }
+        }
+    }
+}
+```
+
+And disable using `ngZone` in `main.ts`:
+
+```typescript
+platformBrowserDynamic().bootstrapModule(AppModule, { ngZone: 'noop' })
+```
+
+That's it, now you have a zoneless application!
+
+### Using `Observable`-s
+
+`async` pipe might no longer work, but instead, you can use another function provided by the library, `useObservable`:
+
+```typescript
+import { useObservable } from 'zoneless';
+
+@Component({
+    selector: 'app-root',
+    template: `
+        <h1>Zoneless</h1>
+        <p>Timer: {{ interval() }}</p>
+    `,
+    })
+})
+export class AppComponent {
+    state = useObservable(interval(1_000));
+}
+```
+
+So we no longer need the `async` pipe, but we can still use `Observable`-s. 
+
+> Note that the `useObservable` function returns a function, so you need to call it to get the value. This is to make Angular's change detection actually know the value has changed. 
+
+The `useObservable` function also automatically unsubscribes from the `Observable` when the component is destroyed.
+
+## Known issues:
+
+No issues have been reported as of now, but this is experimental, so use at your own risk.
+
+## Contributing
+
+Any contribution is welcome, be it a comment, and open issue, PR or anything else. As mentioned before, this is experimental, so any feedback is welcome. The aim is to experiment this further and see if it can be used in production.
