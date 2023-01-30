@@ -72,6 +72,8 @@ That's it, now you have a zoneless application!
 
 ## Known issues:
 
+No issues have been reported as of now, but this is experimental, so use at your own risk.
+
 ## Contributing
 
 Any contribution is welcome, be it a comment, and open issue, PR or anything else. As mentioned before, this is experimental, so any feedback is welcome. The aim is to experiment this further and see if it can be used in production.
