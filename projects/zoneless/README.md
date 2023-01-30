@@ -70,6 +70,31 @@ platformBrowserDynamic().bootstrapModule(AppModule, { ngZone: 'noop' })
 
 That's it, now you have a zoneless application!
 
+### Using `Observable`-s
+
+`async` pipe might no longer work, but instead, you can use another function provided by the library, `useObservable`:
+
+```typescript
+import { useObservable } from 'zoneless';
+
+@Component({
+    selector: 'app-root',
+    template: `
+        <h1>Zoneless</h1>
+        <p>Timer: {{ interval() }}</p>
+    `,
+    })
+})
+export class AppComponent {
+    state = useObservable(interval(1_000));
+```
+
+So we no longer need the `async` pipe, but we can still use `Observable`-s. 
+
+> Note that the `useObservable` function returns a function, so you need to call it to get the value. This is to make Angular's change detection actually know the value has changed. 
+
+The `useObservable` function also automatically unsubscribes from the `Observable` when the component is destroyed.
+
 ## Known issues:
 
 No issues have been reported as of now, but this is experimental, so use at your own risk.
