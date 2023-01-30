@@ -87,6 +87,7 @@ import { useObservable } from 'zoneless';
 })
 export class AppComponent {
     state = useObservable(interval(1_000));
+}
 ```
 
 So we no longer need the `async` pipe, but we can still use `Observable`-s. 
