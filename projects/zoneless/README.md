@@ -2,9 +2,9 @@
 
 ## Purpose
 
-This project aims to remove `zone.js` by using JavaScript [Proxies](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) and the Angular's new [`inject`](https://angular.io/api/core/inject) function to get the [`ChangeDetectorRef`](https://angular.io/api/core/ChangeDetectorRef) of the component and notify when properties are changed. 
+This project aims to remove `zone.js` by using JavaScript [Proxies](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy) and the Angular's new [`inject`](https://angular.io/api/core/inject) function to get the [`ChangeDetectorRef`](https://angular.io/api/core/ChangeDetectorRef) of the component and notify when properties are changed.
 
-Thus, you can remove `zone.js` from your project and both improve the performance of your application and the bundle size. 
+Thus, you can remove `zone.js` from your project and both improve the performance of your application and the bundle size.
 
 ## Usage
 
@@ -19,7 +19,7 @@ npm install zoneless
 ### Import and use
 
 ```typescript
-
+import { Component } from '@angular/core';
 import { useState } from 'zoneless';
 
 @Component({
@@ -75,13 +75,15 @@ That's it, now you have a zoneless application!
 `async` pipe might no longer work, but instead, you can use another function provided by the library, `useObservable`:
 
 ```typescript
+import { Component } from '@angular/core';
+import { interval } from 'rxjs';
 import { useObservable } from 'zoneless';
 
 @Component({
     selector: 'app-root',
     template: `
         <h1>Zoneless</h1>
-        <p>Timer: {{ interval() }}</p>
+        <p>Timer: {{ state() }}</p>
     `,
     })
 })
@@ -90,9 +92,9 @@ export class AppComponent {
 }
 ```
 
-So we no longer need the `async` pipe, but we can still use `Observable`-s. 
+So we no longer need the `async` pipe, but we can still use `Observable`-s.
 
-> Note that the `useObservable` function returns a function, so you need to call it to get the value. This is to make Angular's change detection actually know the value has changed. 
+> Note that the `useObservable` function returns a function, so you need to call it to get the value. This is to make Angular's change detection actually know the value has changed.
 
 The `useObservable` function also automatically unsubscribes from the `Observable` when the component is destroyed.
 
