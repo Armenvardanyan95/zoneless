@@ -70,6 +70,47 @@ platformBrowserDynamic().bootstrapModule(AppModule, { ngZone: 'noop' })
 
 That's it, now you have a zoneless application!
 
+### Computed properties
+
+You can also use computed properties, derived from an existing state:
+
+```typescript
+
+import { useState, computed } from 'zoneless';
+
+@Component({
+    selector: 'app-root',
+    template: `
+        <h1>Zoneless</h1>
+        <p>Counter: {{ state.counter }}</p>
+        <p>Counter * 2: {{ doubleCounter() }}</p>
+        <button (click)="increment()">Increment</button>
+    `,
+    })
+})
+export class AppComponent {
+    state = useState({
+        counter: 0,
+    });
+
+    doubleCounter = computed(
+        () => this.state.counter * 2,
+        () => [this.state.counter],
+    );
+
+    increment() {
+        this.state.counter++; // everything works as usual
+    }
+}
+```
+
+Notice two things: 
+
+1. The `computed` function takes a function as the first argument, which is the function that will be called to get the value of the computed property.
+2. Then it takes another function, which returns an array of dependencies. These are the properties that will be watched for changes. If any of them changes, the computed property will be recalculated.
+3. It itself returns a function, so we need to call it in the template to get the value. This is to make Angular's change detection actually know the value has changed. The computing function will **not** if no dependencies have changed.
+4. The dependency array actually let's us depenend on several other states
+
 ### Using `Observable`-s
 
 `async` pipe might no longer work, but instead, you can use another function provided by the library, `useObservable`:
