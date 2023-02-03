@@ -5,7 +5,8 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development"
+    "watch": "ng build --watch --configuration development",
+    "release": "ng build && cd dist/zoneless && npm publish"
   },
   "private": true,
   "dependencies": {

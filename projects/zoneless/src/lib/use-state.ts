@@ -12,3 +12,5 @@ export function useState<State extends Record<string, any>>(state: State): State
     },
   });
 }
+
+// {count: 0, multiplyBy2}
